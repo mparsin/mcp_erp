@@ -15,7 +15,11 @@ logger = logging.getLogger(__name__)
 mcp = FastMCP("Inventory Optimization Server")
 
 @mcp.tool()
-async def optimize_safety_stock(item_id: str, desired_service_level: float) -> Dict[str, Any]:
+async def optimize_safety_stock(
+    item_id: str,
+    desired_service_level: float,
+    endpoint_url: str = "https://gs3z7pyxxc.execute-api.eu-west-1.amazonaws.com/default/mcp-erp-poc-fake"
+) -> Dict[str, Any]:
     """
     Calculate optimal safety stock level based on historical data and desired service level.
     Historical data is fetched from an external API.
@@ -23,6 +27,7 @@ async def optimize_safety_stock(item_id: str, desired_service_level: float) -> D
     Args:
         item_id: Unique identifier for the item
         desired_service_level: Target service level (0-1)
+        endpoint_url: URL of the external API
     
     Returns:
         Dictionary containing safety stock calculation results
@@ -33,10 +38,8 @@ async def optimize_safety_stock(item_id: str, desired_service_level: float) -> D
     # Fetch historical data from external API
     async with aiohttp.ClientSession() as session:
         try:
-            logger.info(f"Fetching historical data for item {item_id}")
-            async with session.get(
-                f"https://gs3z7pyxxc.execute-api.eu-west-1.amazonaws.com/default/mcp-erp-poc"
-            ) as response:
+            logger.info(f"Fetching historical data for item {item_id} from {endpoint_url}")
+            async with session.get(endpoint_url) as response:
                 if response.status != 200:
                     error_msg = f"Failed to fetch historical data: HTTP {response.status}"
                     logger.error(error_msg)
