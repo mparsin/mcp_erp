@@ -35,7 +35,7 @@ async def optimize_safety_stock(item_id: str, desired_service_level: float) -> D
         try:
             logger.info(f"Fetching historical data for item {item_id}")
             async with session.get(
-                f"http://localhost:8005/histdata"
+                f"https://gs3z7pyxxc.execute-api.eu-west-1.amazonaws.com/default/mcp-erp-poc"
             ) as response:
                 if response.status != 200:
                     error_msg = f"Failed to fetch historical data: HTTP {response.status}"
